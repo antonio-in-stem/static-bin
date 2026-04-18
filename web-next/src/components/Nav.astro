@@ -1,0 +1,117 @@
+﻿---
+import { Image } from "astro:assets";
+import logo from "../assets/logo.png";
+
+const navLinks = [
+  { href: "#rationale",  label: "Why"        },
+  { href: "#format",     label: "Format"     },
+  { href: "#playground", label: "Playground" },
+  { href: "#ports",      label: "Ports"      },
+  { href: "#install",    label: "Install"    },
+];
+---
+
+<header class="nav" transition:persist>
+  <div class="container-xl nav-inner">
+    <a href="#top" class="brand" aria-label="StaticBin home">
+      <Image src={logo} alt="" width={26} height={26} loading="eager" format="webp" quality={92} />
+      <span>StaticBin</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      {navLinks.map((l) => (
+        <a href={l.href}>{l.label}</a>
+      ))}
+    </nav>
+
+    <div class="nav-actions">
+      <a
+        class="nav-link-subtle"
+        href="https://github.com/antonio-in-stem/static-bin"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 .5a11.5 11.5 0 00-3.63 22.4c.58.1.79-.25.79-.55v-2.02c-3.2.7-3.88-1.37-3.88-1.37-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.02 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.56-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.9-.39 2.88-.39.98 0 1.96.13 2.88.39 2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.69 5.4-5.25 5.69.41.36.78 1.06.78 2.14v3.17c0 .3.21.66.8.55A11.5 11.5 0 0012 .5z"/>
+        </svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    backdrop-filter: blur(22px) saturate(1.4);
+    -webkit-backdrop-filter: blur(22px) saturate(1.4);
+    background: rgba(0, 0, 0, 0.64);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 0.75rem;
+    gap: 1.5rem;
+    height: 48px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--color-ink-50);
+    transition: opacity 200ms;
+  }
+  .brand:hover { opacity: 0.8; }
+  .brand img {
+    border-radius: 5px;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--color-ink-200);
+    letter-spacing: -0.005em;
+  }
+  .nav-links a {
+    transition: color 200ms;
+  }
+  .nav-links a:hover {
+    color: var(--color-ink-50);
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .nav-link-subtle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--color-ink-200);
+    padding: 0.35rem 0;
+    transition: color 200ms;
+    letter-spacing: -0.005em;
+  }
+  .nav-link-subtle:hover { color: var(--color-ink-50); }
+
+  @media (max-width: 820px) { .nav-links { display: none; } }
+  @media (max-width: 420px) { .nav-link-subtle span,
+                              .nav-link-subtle:not(:has(svg)) { display: none; } }
+</style>

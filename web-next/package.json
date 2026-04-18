@@ -1,0 +1,28 @@
+{
+  "name": "staticbin-web",
+  "description": "StaticBin · shared-schema state, compressed to a string.",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/check": "latest",
+    "@astrojs/sitemap": "latest",
+    "@astrojs/svelte": "latest",
+    "@fontsource-variable/inter": "latest",
+    "@fontsource-variable/playfair-display": "^5.2.8",
+    "@tailwindcss/vite": "^4.0.0",
+    "astro": "^6.0.0",
+    "motion": "^11.15.0",
+    "sharp": "^0.34.5",
+    "shiki": "^1.24.0",
+    "svelte": "^5.14.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.6.0"
+  }
+}

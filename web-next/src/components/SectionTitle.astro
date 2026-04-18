@@ -1,0 +1,70 @@
+---
+interface Props {
+  eyebrow: string;
+  eyebrowEm?: string;
+  title: string;
+  description?: string;
+  align?: "left" | "center";
+  size?: "md" | "lg";
+}
+
+const { eyebrow, eyebrowEm, title, description, align = "left", size = "lg" } = Astro.props;
+---
+
+<header class={`sect-title reveal align-${align} size-${size}`}>
+  <p class="sect-eyebrow">
+    {eyebrowEm && <strong>{eyebrowEm}</strong>}
+    {eyebrow}
+  </p>
+  <h2 class="sect-h" set:html={title} />
+  {description && <p class="sect-lead" set:html={description} />}
+</header>
+
+<style>
+  .sect-title {
+    max-width: 820px;
+    margin-bottom: clamp(3rem, 6vh, 5rem);
+  }
+  .align-center {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .sect-eyebrow {
+    margin-bottom: 1.1rem;
+  }
+
+  .sect-h {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: clamp(2.25rem, 4.8vw, 4rem);
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    color: var(--color-ink-50);
+  }
+  .size-md .sect-h {
+    font-size: clamp(1.75rem, 3.6vw, 3rem);
+  }
+
+  .sect-h :global(em) {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1em;
+    line-height: 1;
+    color: var(--color-ink-50);
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 60px rgba(41, 151, 255, 0.14);
+  }
+
+  .sect-lead {
+    margin-top: 1.25rem;
+    font-size: clamp(1rem, 1.25vw, 1.125rem);
+    color: var(--color-ink-200);
+    max-width: 60ch;
+    line-height: 1.5;
+  }
+  .align-center .sect-lead {
+    margin-inline: auto;
+  }
+</style>

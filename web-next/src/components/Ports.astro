@@ -1,0 +1,192 @@
+---
+import SectionTitle from "./SectionTitle.astro";
+import Code from "./Code.astro";
+
+const samples = {
+  python: `from staticbin import *
+
+stream_bits = stream([
+    encode_bitfield([True, False, True, True]),
+    encode_small_ints([42, 7, 255, 0], width=8),
+    encode_integers([1, 2, 3, 5, 8, 13, 21]),
+])
+token = to_base64url(stream_bits)
+
+for section in decode_stream(token):
+    print(section.mode, section.chunks)`,
+
+  javascript: `import {
+  encodeBitfield,
+  encodeSmallInts,
+  encodeIntegers,
+  stream,
+  toBase64Url,
+  decodeStream,
+} from "staticbin";
+
+const bits = stream([
+  encodeBitfield([true, false, true, true]),
+  encodeSmallInts([42, 7, 255, 0], 8),
+  encodeIntegers([1, 2, 3, 5, 8, 13, 21]),
+]);
+
+const token = toBase64Url(bits);
+for (const s of decodeStream(token)) {
+  console.log(s.mode, s.chunks);
+}`,
+
+  c: `#include "staticbin.h"
+
+int main(void) {
+    char buf[512] = {0};
+    sb_writer_t w = sb_writer_new(buf, sizeof buf);
+
+    sb_encode_bitfield(&w, (bool[]){1, 0, 1, 1}, 4);
+    sb_encode_small_ints(&w, (uint32_t[]){42, 7, 255, 0}, 4, 8);
+    sb_encode_integers(&w, (uint32_t[]){1, 2, 3, 5, 8, 13, 21}, 7);
+
+    char token[128];
+    sb_to_base64url(sb_writer_bits(&w), token, sizeof token);
+    puts(token);
+}`,
+
+  fortran: `program beacon
+    use staticbin
+    implicit none
+    character(len=512) :: stream_bits, token
+    logical :: flags(4) = [.true., .false., .true., .true.]
+    integer :: ints(7) = [1, 2, 3, 5, 8, 13, 21]
+
+    call sb_encode_bitfield(flags, stream_bits)
+    call sb_encode_integers(ints, stream_bits)
+    call sb_to_base64url(stream_bits, token)
+    print *, trim(token)
+end program beacon`,
+};
+
+const ports = [
+  { id: "python",     label: "Python",     lang: "python"     as const, filename: "device_beacon.py"  },
+  { id: "javascript", label: "JavaScript", lang: "javascript" as const, filename: "device_beacon.mjs" },
+  { id: "c",          label: "C99",        lang: "c"          as const, filename: "device_beacon.c"   },
+  { id: "fortran",    label: "Fortran",    lang: "fortran"    as const, filename: "device_beacon.f90" },
+];
+---
+
+<section class="sect" id="ports">
+  <div class="container-xl">
+    <SectionTitle
+      eyebrow="same bytes, any language."
+      eyebrowEm="Ports."
+      title={`<em>One codec,</em> four implementations.`}
+      description="Four reference ports agree bit-for-bit. Python is the canonical one. The others were translated by hand against the same test vectors."
+    />
+
+    <div class="ports reveal">
+      <div class="ports-tabs" role="tablist">
+        {ports.map((p, i) => (
+          <button
+            class="ports-tab"
+            role="tab"
+            data-port={p.id}
+            aria-selected={i === 0}
+          >
+            <span class="ports-tab-dot" aria-hidden="true"></span>
+            {p.label}
+          </button>
+        ))}
+      </div>
+      <div class="ports-panes">
+        {ports.map((p, i) => (
+          <div class="ports-pane" data-pane={p.id} hidden={i !== 0}>
+            <Code code={samples[p.id as keyof typeof samples]} lang={p.lang} filename={p.filename} label={p.label} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function hydrate() {
+    const tabs = document.querySelectorAll<HTMLButtonElement>(".ports-tab");
+    const panes = document.querySelectorAll<HTMLElement>(".ports-pane");
+    if (!tabs.length) return;
+
+    tabs.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const port = btn.dataset.port;
+        tabs.forEach((b) => b.setAttribute("aria-selected", String(b === btn)));
+        panes.forEach((p) => {
+          p.hidden = p.dataset.pane !== port;
+        });
+      });
+    });
+  }
+  document.addEventListener("astro:page-load", hydrate);
+  hydrate();
+</script>
+
+<style>
+  .ports {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+  @media (max-width: 820px) {
+    .ports { grid-template-columns: 1fr; }
+  }
+  .ports-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  @media (max-width: 820px) {
+    .ports-tabs {
+      flex-direction: row;
+      overflow-x: auto;
+      padding-bottom: 0.25rem;
+      scrollbar-width: none;
+    }
+    .ports-tabs::-webkit-scrollbar { display: none; }
+  }
+  .ports-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid transparent;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    color: var(--color-ink-200);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 250ms var(--ease-out-quint);
+    text-align: left;
+    white-space: nowrap;
+    letter-spacing: -0.005em;
+  }
+  .ports-tab:hover {
+    color: var(--color-ink-50);
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .ports-tab[aria-selected="true"] {
+    background: rgba(41, 151, 255, 0.08);
+    border-color: rgba(41, 151, 255, 0.25);
+    color: var(--color-ink-50);
+  }
+  .ports-tab-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-ink-500);
+    transition: background 250ms, box-shadow 250ms;
+  }
+  .ports-tab[aria-selected="true"] .ports-tab-dot {
+    background: var(--color-signal-500);
+    box-shadow: 0 0 10px var(--color-signal-500);
+  }
+  .ports-pane[hidden] { display: none; }
+</style>

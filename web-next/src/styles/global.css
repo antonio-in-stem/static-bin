@@ -1,0 +1,510 @@
+/*
+ * StaticBin · design system v3
+ *
+ * One sans, one elegant serif. Apple-informed dark palette. A single
+ * signal-blue for affordance and a bronze warmth as supporting accent.
+ * Mono only inside <pre><code>, never in chrome.
+ *
+ *  Typography
+ *  ──────────
+ *  Inter Variable         · everything UI, prose, labels, numerals.
+ *  Instrument Serif       · display italic moments only. Naturally
+ *                           calligraphic italic, reads "editorial", not
+ *                           "robotic".
+ *  Monospace (system)     · inside code blocks only.
+ */
+
+@import "tailwindcss";
+@import "@fontsource-variable/inter/index.css";
+@import "@fontsource-variable/playfair-display/wght.css";
+@import "@fontsource-variable/playfair-display/wght-italic.css";
+
+/* ─────────────────────────────────────────────── tokens ── */
+@theme {
+  /* surface ramp · true black to soft space-gray */
+  --color-ink-0:    #000000;
+  --color-ink-900:  #0a0a0b;
+  --color-ink-850:  #111113;
+  --color-ink-800:  #18181b;
+  --color-ink-700:  #1d1d1f;
+  --color-ink-600:  #262629;
+  --color-ink-500:  #3a3a3d;
+  --color-ink-400:  #6e6e73;
+  --color-ink-300:  #86868b;
+  --color-ink-200:  #a1a1a6;
+  --color-ink-100:  #d2d2d7;
+  --color-ink-50:   #f5f5f7;
+
+  /* accents */
+  --color-signal-500:  #2997ff;
+  --color-signal-600:  #0071e3;
+  --color-signal-300:  #6ab3ff;
+  --color-signal-100:  #cde3ff;
+
+  --color-warmth-500:  #b08851;
+  --color-warmth-400:  #c6a877;
+  --color-warmth-300:  #d4b67f;
+
+  --color-positive:    #32d74b;
+
+  /* typography */
+  --font-sans:    "Inter Variable", ui-sans-serif, system-ui, -apple-system, "SF Pro Text", sans-serif;
+  --font-display: "Playfair Display Variable", ui-serif, Georgia, Garamond, "Times New Roman", serif;
+  --font-mono:    ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
+
+  /* radius */
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   22px;
+  --radius-xl:   32px;
+  --radius-2xl:  48px;
+
+  /* shadow */
+  --shadow-card:     0 1px 0 rgba(255,255,255,0.04) inset, 0 24px 60px -28px rgba(0,0,0,0.7);
+  --shadow-float:    0 30px 80px -30px rgba(0,0,0,0.9);
+  --shadow-glow:     0 0 120px -20px rgba(41,151,255,0.35);
+
+  /* easing */
+  --ease-out-quint:     cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-quart:  cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-spring:        cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* layout */
+  --bp-content:  80rem;
+  --gutter:      clamp(1.25rem, 3.5vw, 2.5rem);
+
+  /* section rhythm · tightened per user feedback */
+  --sect-pad-y:    clamp(4.5rem, 9vh, 7rem);
+  --sect-gap-y:    clamp(2.5rem, 5vh, 4rem);
+}
+
+/* ─────────────────────────────────────────────── base ── */
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+
+  html, body {
+    background: var(--color-ink-0);
+    color: var(--color-ink-50);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.011em;
+  }
+
+  /* Subtle page backlight · warm + cool · static */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(1200px 600px at 80% -5%,  rgba(41,151,255,0.05), transparent 65%),
+      radial-gradient(1000px 500px at 10% 100%, rgba(198,168,119,0.04), transparent 70%);
+  }
+
+  ::selection {
+    background: rgba(41, 151, 255, 0.35);
+    color: #fff;
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--color-ink-50);
+  }
+
+  /* Display italic treatment · Playfair Display italic, editorial cursive */
+  h1 em, h2 em, h3 em,
+  .display em {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--color-ink-50);
+    letter-spacing: -0.015em;
+    font-size: 1em;
+    line-height: 0.98;
+  }
+
+  p {
+    line-height: 1.5;
+    color: var(--color-ink-200);
+    font-size: 1.0625rem;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  code, pre, kbd, samp {
+    font-family: var(--font-mono);
+    font-feature-settings: "zero";
+  }
+
+  button {
+    font-family: inherit;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* ─────────────────────────────────────────── primitives ── */
+@layer components {
+
+  .container-xl {
+    width: 100%;
+    max-width: var(--bp-content);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* canonical section */
+  .sect {
+    padding-block: var(--sect-pad-y);
+    position: relative;
+  }
+
+  /* eyebrow · sans, not mono */
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    color: var(--color-signal-300);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .eyebrow-warm { color: var(--color-warmth-400); }
+
+  /* "Section." eyebrow treatment, Apple-style */
+  .sect-eyebrow {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-ink-300);
+    letter-spacing: -0.01em;
+  }
+  .sect-eyebrow strong {
+    color: var(--color-ink-50);
+    font-weight: 600;
+    margin-right: 0.4em;
+  }
+
+  /* ── liquid glass family ─────────────────────────────── */
+
+  /* Base surface: tinted dark card */
+  .surface {
+    background: linear-gradient(180deg, var(--color-ink-800) 0%, var(--color-ink-850) 100%);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-lg);
+    position: relative;
+    overflow: hidden;
+  }
+  .surface::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.09), transparent);
+    pointer-events: none;
+  }
+
+  /* Frosted, blurred translucency · real liquid glass */
+  .liquid-glass {
+    position: relative;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.045) 0%,
+      rgba(255, 255, 255, 0.015) 40%,
+      rgba(255, 255, 255, 0.03) 100%
+    );
+    backdrop-filter: blur(22px) saturate(1.4);
+    -webkit-backdrop-filter: blur(22px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+      0 20px 50px -20px rgba(0, 0, 0, 0.5);
+  }
+  /* Spec highlight · subtle moving sheen across the top edge */
+  .liquid-glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        800px 200px at var(--glass-x, 30%) -10%,
+        rgba(255, 255, 255, 0.08),
+        transparent 55%
+      );
+    opacity: 0.8;
+    transition: background 600ms var(--ease-out-quint);
+  }
+
+  /* Card hover lift */
+  .card-hover {
+    transition:
+      transform 500ms var(--ease-out-quint),
+      border-color 500ms var(--ease-out-quint),
+      box-shadow 500ms var(--ease-out-quint),
+      background 500ms var(--ease-out-quint);
+    will-change: transform;
+  }
+  .card-hover:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255,255,255,0.14);
+    box-shadow: var(--shadow-card), var(--shadow-float);
+  }
+
+  /* Interactive glass · tracks pointer via --mx / --my (set by JS) */
+  .glow-track {
+    position: relative;
+    isolation: isolate;
+  }
+  .glow-track::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: radial-gradient(
+      320px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(41, 151, 255, 0.14),
+      transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 400ms;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-track:hover::before { opacity: 1; }
+  .glow-track > * { position: relative; z-index: 1; }
+
+  /* ── buttons ─────────────────────────────────────────── */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.4rem;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    border: 1px solid transparent;
+    cursor: pointer;
+    letter-spacing: -0.01em;
+    transition: background 300ms var(--ease-out-quint),
+                border-color 300ms var(--ease-out-quint),
+                color 300ms var(--ease-out-quint),
+                transform 200ms var(--ease-spring);
+    will-change: transform;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary {
+    background: var(--color-signal-600);
+    color: #fff;
+    border-color: transparent;
+  }
+  .btn-primary:hover { background: var(--color-signal-500); }
+  .btn-primary:active { transform: scale(0.97); }
+  /* liquid sheen across primary button */
+  .btn-primary::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      100deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 70%
+    );
+    transform: translateX(-120%);
+    transition: transform 900ms var(--ease-out-quint);
+    pointer-events: none;
+  }
+  .btn-primary:hover::before { transform: translateX(120%); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-signal-500);
+    border-color: transparent;
+  }
+  .btn-ghost:hover { background: rgba(41,151,255,0.08); }
+
+  .btn-ghost-light {
+    background: rgba(255,255,255,0.06);
+    color: var(--color-ink-50);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .btn-ghost-light:hover {
+    background: rgba(255,255,255,0.09);
+    border-color: rgba(255,255,255,0.14);
+  }
+
+  .btn-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-signal-500);
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    transition: color 200ms;
+  }
+  .btn-link:hover { color: var(--color-signal-300); }
+  .btn-link svg { transition: transform 300ms var(--ease-out-quint); }
+  .btn-link:hover svg { transform: translateX(3px); }
+
+  /* ── reveal (IO-driven) ──────────────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 900ms var(--ease-out-quint),
+      transform 900ms var(--ease-out-quint);
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── shiki code panel ────────────────────────────────── */
+  .shiki-wrap {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: var(--color-ink-900);
+  }
+  .shiki-wrap pre {
+    margin: 0;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.65;
+    background: transparent !important;
+  }
+  .shiki-wrap pre code { background: transparent !important; }
+  .shiki-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.015);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--color-ink-300);
+    letter-spacing: -0.005em;
+  }
+
+  /* ── scroll indicator ────────────────────────────────── */
+  .scroll-indicator {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--color-signal-500);
+    transform-origin: 0 0;
+    transform: scaleX(0);
+    z-index: 80;
+    transition: opacity 300ms;
+  }
+
+  /* ── section nav (right side, desktop) ───────────────── */
+  .sect-nav {
+    position: fixed;
+    top: 50%;
+    right: clamp(1rem, 2.5vw, 2rem);
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    z-index: 40;
+    padding: 0.9rem 0.55rem;
+    background: rgba(20, 20, 22, 0.65);
+    backdrop-filter: blur(22px) saturate(1.4);
+    -webkit-backdrop-filter: blur(22px) saturate(1.4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 999px;
+    opacity: 0;
+    transform: translate(8px, -50%);
+    transition: opacity 400ms var(--ease-out-quint), transform 400ms var(--ease-out-quint);
+  }
+  .sect-nav.on {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+  .sect-nav a {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--color-ink-500);
+    transition: background 250ms, transform 250ms;
+    position: relative;
+  }
+  .sect-nav a:hover { background: var(--color-ink-200); transform: scale(1.2); }
+  .sect-nav a.active { background: var(--color-ink-50); }
+  .sect-nav a.active::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 999px;
+    border: 1px solid var(--color-ink-50);
+    opacity: 0.35;
+  }
+  .sect-nav a span {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%) translateX(4px);
+    font-size: 12px;
+    color: var(--color-ink-200);
+    background: rgba(20,20,22,0.8);
+    padding: 0.25rem 0.55rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms, transform 200ms;
+  }
+  .sect-nav a:hover span {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+
+  @media (max-width: 900px) {
+    .sect-nav { display: none; }
+  }
+
+  /* ── reduced motion ──────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal, .reveal.in { opacity: 1; transform: none; transition: none; }
+    .btn, .btn-link svg, .btn-primary::before { transition: none; }
+  }
+}
+
+/* scrollbar polish */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); background-clip: content-box; }

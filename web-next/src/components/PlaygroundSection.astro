@@ -1,0 +1,42 @@
+---
+import SectionTitle from "./SectionTitle.astro";
+import Playground from "./Playground.svelte";
+---
+
+<section class="sect" id="playground">
+  <div class="container-xl">
+    <SectionTitle
+      eyebrow="compose a stream, watch the bits."
+      eyebrowEm="Playground."
+      title={`Poke it. <em>Break it.</em>`}
+      description="Add sections, change the values, and watch the token and the underlying bits update live. It all runs right here in your browser."
+    />
+
+    <div class="reveal">
+      <Playground client:visible />
+    </div>
+
+    <p class="pg-foot">
+      The decoder never needs the schema. It tells you the mode and the width,
+      and you tell <em>it</em> what the chunks mean.
+    </p>
+  </div>
+</section>
+
+<style>
+  .pg-foot {
+    margin-top: 1.5rem;
+    font-size: 13.5px;
+    color: var(--color-ink-300);
+    max-width: 60ch;
+    letter-spacing: -0.005em;
+  }
+  .pg-foot em {
+    color: var(--color-signal-300);
+    font-style: italic;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 15.5px;
+    letter-spacing: -0.01em;
+  }
+</style>

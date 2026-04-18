@@ -1,0 +1,19 @@
+{
+  "name": "staticbin",
+  "version": "1.0.0",
+  "description": "Compact shared-schema state serialization. JavaScript port.",
+  "type": "module",
+  "main": "./src/staticbin.mjs",
+  "exports": {
+    ".": "./src/staticbin.mjs"
+  },
+  "files": ["src", "README.md"],
+  "scripts": {
+    "test": "node --test tests/codec.test.mjs"
+  },
+  "keywords": ["serialization", "base64", "bitstream", "elias-gamma", "url-safe"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

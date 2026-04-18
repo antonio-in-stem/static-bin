@@ -1,0 +1,229 @@
+---
+import SectionTitle from "./SectionTitle.astro";
+import { getCollection } from "astro:content";
+
+const cases = (await getCollection("usecases")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<section class="sect" id="use-cases">
+  <div class="container-xl">
+    <SectionTitle
+      eyebrow="a specific tool, for specific jobs."
+      eyebrowEm="Where it fits."
+      title={`Built for <em>one kind of wire.</em>`}
+      description="StaticBin shines in a specific setup: when both sides of the wire already share the schema. These are the moments that actually call for it."
+    />
+
+    <div class="cases-viewport reveal">
+      <div class="cases-track" data-cases-track>
+        {cases.map((c, i) => (
+          <article class="case-card" style={`--i: ${i}`}>
+            <div class="case-num">{String(c.data.order).padStart(2, "0")}<span>/{cases.length.toString().padStart(2, "0")}</span></div>
+            <h3 class="case-title">{c.data.title}</h3>
+            <div class="case-body">
+              <Fragment set:html={c.rendered?.html ?? ""} />
+            </div>
+            {c.data.footnote && (
+              <p class="case-note">{c.data.footnote}</p>
+            )}
+          </article>
+        ))}
+      </div>
+
+      <div class="cases-scrollbar" aria-hidden="true">
+        <div class="cases-scrollbar-fill" data-cases-fill></div>
+      </div>
+    </div>
+
+    <div class="cases-controls">
+      <button class="case-btn" type="button" data-cases-prev aria-label="Previous">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="cases-count" data-cases-count>1<span class="cases-count-sep"> / </span>{cases.length}</span>
+      <button class="case-btn" type="button" data-cases-next aria-label="Next">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  function wire() {
+    const track = document.querySelector<HTMLElement>("[data-cases-track]");
+    const fill = document.querySelector<HTMLElement>("[data-cases-fill]");
+    const count = document.querySelector<HTMLElement>("[data-cases-count]");
+    const prev = document.querySelector<HTMLButtonElement>("[data-cases-prev]");
+    const next = document.querySelector<HTMLButtonElement>("[data-cases-next]");
+    if (!track) return;
+
+    function update() {
+      const max = track!.scrollWidth - track!.clientWidth;
+      const p = max > 0 ? track!.scrollLeft / max : 0;
+      if (fill) fill.style.transform = `scaleX(${Math.max(0.04, p)})`;
+
+      const cards = track!.querySelectorAll<HTMLElement>(".case-card");
+      const center = track!.scrollLeft + track!.clientWidth / 2;
+      let active = 0;
+      let best = Infinity;
+      cards.forEach((c, i) => {
+        const mid = c.offsetLeft + c.clientWidth / 2;
+        const d = Math.abs(mid - center);
+        if (d < best) { best = d; active = i; }
+      });
+      if (count) count.firstChild!.textContent = String(active + 1);
+    }
+
+    function scrollBy(dir: 1 | -1) {
+      const card = track!.querySelector<HTMLElement>(".case-card");
+      if (!card) return;
+      track!.scrollBy({ left: dir * (card.clientWidth + 20), behavior: "smooth" });
+    }
+
+    track.addEventListener("scroll", update, { passive: true });
+    prev?.addEventListener("click", () => scrollBy(-1));
+    next?.addEventListener("click", () => scrollBy(1));
+    window.addEventListener("resize", update);
+    update();
+  }
+
+  document.addEventListener("astro:page-load", wire);
+  wire();
+</script>
+
+<style>
+  .cases-viewport {
+    position: relative;
+  }
+
+  .cases-track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(400px, 85vw);
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1.25rem;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+  .cases-track::-webkit-scrollbar { display: none; }
+
+  .case-card {
+    background: linear-gradient(180deg, var(--color-ink-800) 0%, var(--color-ink-850) 100%);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-xl);
+    padding: clamp(1.75rem, 2.25vw, 2.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    scroll-snap-align: start;
+    min-height: 340px;
+    transition: transform 500ms var(--ease-out-quint), border-color 500ms;
+    position: relative;
+    overflow: hidden;
+  }
+  .case-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 140px;
+    background: radial-gradient(closest-side, rgba(41,151,255,0.12), transparent 80%);
+    opacity: 0;
+    transition: opacity 500ms;
+    pointer-events: none;
+  }
+  .case-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.12);
+  }
+  .case-card:hover::before { opacity: 1; }
+
+  .case-num {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-ink-100);
+    letter-spacing: -0.005em;
+    font-family: var(--font-mono);
+  }
+  .case-num span {
+    color: var(--color-ink-500);
+  }
+
+  .case-title {
+    font-size: clamp(1.3rem, 1.8vw, 1.6rem);
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: var(--color-ink-50);
+    margin: 0;
+  }
+
+  .case-body {
+    font-size: 0.95rem;
+    color: var(--color-ink-200);
+    line-height: 1.55;
+  }
+  .case-body :global(p) { margin: 0; }
+
+  .case-note {
+    margin: auto 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    font-size: 12.5px;
+    color: var(--color-ink-400);
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+  }
+
+  .cases-scrollbar {
+    height: 2px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 0.75rem;
+  }
+  .cases-scrollbar-fill {
+    height: 100%;
+    background: var(--color-signal-500);
+    transform-origin: 0 0;
+    transform: scaleX(0.1);
+    transition: transform 120ms linear;
+    border-radius: 999px;
+  }
+
+  .cases-controls {
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .case-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    color: var(--color-ink-100);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 200ms;
+  }
+  .case-btn:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.18);
+  }
+  .case-btn:active { transform: scale(0.96); }
+
+  .cases-count {
+    font-size: 13px;
+    color: var(--color-ink-300);
+    font-family: var(--font-mono);
+    letter-spacing: -0.005em;
+  }
+  .cases-count-sep { color: var(--color-ink-500); }
+</style>

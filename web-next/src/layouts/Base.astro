@@ -1,0 +1,116 @@
+---
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "StaticBin, shared schema, one string.",
+  description = "Both ends already know the shape of the data. StaticBin skips the schema and ships the state. v1.0, January 2026, by Antonio M. via StaticResearch.",
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const logoHref = `${base}/logo.png`;
+
+const sectionDots = [
+  { href: "#hero",        label: "intro"      },
+  { href: "#rationale",   label: "why"        },
+  { href: "#format",      label: "format"     },
+  { href: "#playground",  label: "playground" },
+  { href: "#ports",       label: "ports"      },
+  { href: "#use-cases",   label: "where"      },
+  { href: "#install",     label: "install"    },
+  { href: "#about",       label: "about"      },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <link rel="icon" href={logoHref} type="image/png" />
+    <link rel="apple-touch-icon" href={logoHref} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(logoHref, Astro.site)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <meta name="theme-color" content="#000000" />
+    <meta name="author" content="Antonio M. · StaticResearch" />
+
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "SoftwareSourceCode",
+        name: "StaticBin",
+        codeRepository: "https://github.com/antonio-in-stem/static-bin",
+        programmingLanguage: ["Python", "JavaScript", "C", "Fortran"],
+        version: "1.0.0",
+        datePublished: "2026-01-15",
+        author: {
+          "@type": "Person",
+          name: "Antonio M.",
+          affiliation: "StaticResearch",
+          url: "https://www.linkedin.com/in/antonio-in-stem/",
+        },
+        description,
+      })}
+    />
+
+    <ClientRouter fallback="swap" />
+  </head>
+  <body>
+    <div class="scroll-indicator" aria-hidden="true"></div>
+
+    <Nav />
+
+    <nav class="sect-nav" aria-label="Section navigation">
+      {sectionDots.map((s) => (
+        <a href={s.href} aria-label={s.label}>
+          <span>{s.label}</span>
+        </a>
+      ))}
+    </nav>
+
+    <main id="top">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <script>
+      import "../lib/motion-scroll.ts";
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  main { position: relative; z-index: 1; }
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 450ms;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+</style>

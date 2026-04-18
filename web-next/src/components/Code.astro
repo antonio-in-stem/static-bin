@@ -1,0 +1,56 @@
+---
+import { highlight, type ShikiLang } from "../lib/shiki";
+
+interface Props {
+  code: string;
+  lang: ShikiLang;
+  filename?: string;
+  label?: string;
+}
+
+const { code, lang, filename, label } = Astro.props;
+const trimmed = code.replace(/^\n+/, "").replace(/\s+$/, "");
+const html = await highlight(trimmed, lang);
+const displayLabel = label ?? lang;
+---
+
+<div class="shiki-wrap">
+  <div class="shiki-head">
+    <span class="shiki-head-left">
+      <span class="shiki-dots" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </span>
+      {filename && <span class="shiki-filename">{filename}</span>}
+    </span>
+    <span class="shiki-lang">{displayLabel}</span>
+  </div>
+  <Fragment set:html={html} />
+</div>
+
+<style>
+  .shiki-head-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .shiki-dots {
+    display: inline-flex;
+    gap: 6px;
+  }
+  .shiki-dots span {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    display: inline-block;
+  }
+  .shiki-filename {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 12px;
+    color: var(--color-ink-200);
+  }
+  .shiki-lang {
+    color: var(--color-signal-300);
+  }
+</style>

@@ -1,0 +1,100 @@
+﻿---
+import SectionTitle from "./SectionTitle.astro";
+import Code from "./Code.astro";
+
+const steps = [
+  {
+    label: "Python",
+    note: "PyPI release is on the way. For now, grab the reference module directly.",
+    code: `pip install staticbin
+# or just vendor a single file:
+curl -O https://raw.githubusercontent.com/antonio-in-stem/static-bin/main/implementations/python/staticbin/codec.py`,
+    lang: "bash" as const,
+  },
+  {
+    label: "JavaScript",
+    note: "ESM, zero dependencies. Works in Node 18+ and browsers.",
+    code: `npm i staticbin
+# or as a vendored file:
+curl -O https://raw.githubusercontent.com/antonio-in-stem/static-bin/main/implementations/javascript/src/staticbin.mjs`,
+    lang: "bash" as const,
+  },
+  {
+    label: "C99",
+    note: "Header-only. Drop staticbin.h into your source tree and include it.",
+    code: `curl -O https://raw.githubusercontent.com/antonio-in-stem/static-bin/main/implementations/c/staticbin.h
+# then, in your code:
+#include "staticbin.h"`,
+    lang: "bash" as const,
+  },
+  {
+    label: "Fortran",
+    note: "Single-module. Compile it with the rest of your project.",
+    code: `curl -O https://raw.githubusercontent.com/antonio-in-stem/static-bin/main/implementations/fortran/staticbin.f90
+gfortran -c staticbin.f90`,
+    lang: "bash" as const,
+  },
+];
+---
+
+<section class="sect" id="install">
+  <div class="container-xl">
+    <SectionTitle
+      eyebrow="four ways in."
+      eyebrowEm="Install."
+      title={`Pick your <em>runtime.</em>`}
+      description="Package install where it's available. Otherwise vendor the single reference file. The codec is small enough that inlining it is usually the better call anyway."
+    />
+
+    <div class="install-grid">
+      {steps.map((s) => (
+        <article class="install-card surface card-hover glow-track reveal">
+          <header class="install-head">
+            <span class="install-label">{s.label}</span>
+          </header>
+          <p class="install-note">{s.note}</p>
+          <Code code={s.code} lang={s.lang} />
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .install-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 820px) {
+    .install-grid { grid-template-columns: 1fr; }
+  }
+  .install-card {
+    padding: clamp(1.75rem, 2.5vw, 2.25rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 0;
+  }
+  .install-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .install-label {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    color: var(--color-signal-300);
+    padding: 0.3rem 0.7rem;
+    border: 1px solid rgba(41, 151, 255, 0.25);
+    border-radius: 999px;
+    background: rgba(41, 151, 255, 0.05);
+  }
+  .install-note {
+    color: var(--color-ink-200);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+</style>

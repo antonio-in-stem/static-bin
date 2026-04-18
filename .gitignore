@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+.pytest_cache/
+
+# JavaScript / Astro
+node_modules/
+.cache/
+.astro/
+
+# Fortran / C
+*.o
+*.mod
+*.a
+*.exe
+build/
+
+# Rust (just in case)
+target/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Archives and legacy assets (not shipped)
+*.zip
+web/
+
+# Private collaboration notes (local only)
+AI-COLLABORATION-NOTES.md

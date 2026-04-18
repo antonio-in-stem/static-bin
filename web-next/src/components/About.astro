@@ -1,0 +1,220 @@
+---
+import { Image } from "astro:assets";
+import SectionTitle from "./SectionTitle.astro";
+import { getCollection } from "astro:content";
+import pfp from "../assets/pfp.png";
+
+const roadmap = (await getCollection("roadmap")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const statusLabels: Record<string, string> = {
+  considering: "considering",
+  planned: "planned",
+  "wont-fix": "won't fix",
+};
+---
+
+<section class="sect" id="about">
+  <div class="container-xl">
+    <SectionTitle
+      eyebrow="honest limits, open horizon."
+      eyebrowEm="About."
+      title={`A small thing, <em>still growing up.</em>`}
+      description="StaticBin is v1.0 because it solved one specific problem cleanly. There's plenty of room to grow. There's also a real chance it stays exactly this size forever. Both are fine."
+    />
+
+    <div class="about-grid">
+      <article class="about-note liquid-glass reveal">
+        <div class="eyebrow eyebrow-warm">origin</div>
+        <p>
+          It came out of a runtime that refused third-party libraries, refused
+          file access, and refused most of the moving parts a general
+          serializer would reach for. String concatenation, integer math,
+          nothing else. The result ended up clean enough to publish, so here
+          we are.
+        </p>
+        <p>
+          Whether it earns a v2 depends on whether new use cases actually
+          demand more from the wire. If they do, the roadmap over here is
+          where I'm thinking out loud. If they don't, the honest answer is:
+          the format is finished.
+        </p>
+      </article>
+
+      <ul class="roadmap">
+        {roadmap.map((r) => (
+          <li class="roadmap-item surface card-hover glow-track reveal">
+            <div class={`roadmap-status status-${r.data.status}`}>
+              {statusLabels[r.data.status]}
+            </div>
+            <h4 class="roadmap-title">{r.data.title}</h4>
+            <div class="roadmap-body">
+              <Fragment set:html={r.rendered?.html ?? ""} />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <aside class="author-card liquid-glass reveal">
+      <Image src={pfp} alt="Antonio M." class="author-portrait" width={192} height={192} format="webp" quality={88} />
+      <div class="author-body">
+        <div class="eyebrow eyebrow-warm">author</div>
+        <blockquote class="author-quote">
+          I wrote StaticBin because I had to. I'm releasing it because the
+          constraints that forced it into existence turned out to be the
+          constraints of every small system I've worked on since. Use it,
+          break it, port it. It's yours.
+        </blockquote>
+        <div class="author-meta">
+          <strong>Antonio M.</strong>
+          <span class="author-role">Applied Scientist, StaticResearch</span>
+          <div class="author-links">
+            <a href="https://www.linkedin.com/in/antonio-in-stem/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <span aria-hidden="true">·</span>
+            <a href="https://github.com/antonio-in-stem" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+  }
+  @media (max-width: 980px) { .about-grid { grid-template-columns: 1fr; } }
+
+  .about-note {
+    padding: clamp(1.75rem, 2.5vw, 2.5rem);
+  }
+  .about-note p {
+    font-size: 1rem;
+    color: var(--color-ink-200);
+    line-height: 1.55;
+  }
+  .about-note .eyebrow { margin-bottom: 1rem; }
+  .about-note p + p { margin-top: 1rem; }
+
+  .roadmap {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .roadmap-item {
+    padding: 1.25rem 1.5rem;
+  }
+  .roadmap-status {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: -0.005em;
+    font-weight: 500;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+  }
+  .status-considering {
+    color: var(--color-signal-300);
+    background: rgba(41, 151, 255, 0.06);
+    border-color: rgba(41, 151, 255, 0.25);
+  }
+  .status-planned {
+    color: var(--color-warmth-300);
+    background: rgba(198, 168, 119, 0.06);
+    border-color: rgba(198, 168, 119, 0.3);
+  }
+  .status-wont-fix {
+    color: var(--color-ink-400);
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+  .roadmap-title {
+    margin: 0.55rem 0 0.35rem;
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .roadmap-body :global(p) {
+    color: var(--color-ink-300);
+    font-size: 0.93rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .author-card {
+    margin-top: 3rem;
+    padding: clamp(2rem, 3vw, 3rem);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: center;
+    background:
+      radial-gradient(500px 300px at 0% 0%, rgba(41, 151, 255, 0.08), transparent 60%),
+      radial-gradient(400px 300px at 100% 100%, rgba(198, 168, 119, 0.06), transparent 60%),
+      linear-gradient(135deg, var(--color-ink-800), var(--color-ink-850));
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-xl);
+  }
+  @media (max-width: 640px) {
+    .author-card { grid-template-columns: 1fr; text-align: center; }
+    .author-portrait { margin: 0 auto; }
+    .author-links { justify-content: center; }
+  }
+  .author-portrait {
+    border-radius: 50%;
+    width: 104px;
+    height: 104px;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.04),
+      0 20px 40px -16px rgba(0, 0, 0, 0.7);
+  }
+  .author-quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.35rem;
+    line-height: 1.45;
+    color: var(--color-ink-50);
+    margin: 0.75rem 0 1.25rem;
+    max-width: 52ch;
+    letter-spacing: -0.015em;
+  }
+  .author-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1rem;
+    font-size: 13.5px;
+  }
+  .author-meta strong {
+    color: var(--color-ink-50);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .author-role {
+    color: var(--color-ink-300);
+    font-size: 13px;
+    letter-spacing: -0.005em;
+  }
+  .author-links {
+    margin-left: auto;
+    display: inline-flex;
+    gap: 0.5rem;
+    color: var(--color-ink-400);
+    font-size: 13px;
+  }
+  .author-links a {
+    color: var(--color-signal-500);
+    transition: color 200ms;
+  }
+  .author-links a:hover { color: var(--color-signal-300); }
+</style>

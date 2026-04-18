@@ -1,0 +1,126 @@
+---
+import SectionTitle from "./SectionTitle.astro";
+import { getCollection } from "astro:content";
+
+const tenets = (await getCollection("tenets")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<section class="sect" id="rationale">
+  <div class="container-xl">
+    <SectionTitle
+      eyebrow="the reason it exists."
+      eyebrowEm="Why."
+      title={`A narrow answer to a <em>narrow question.</em>`}
+      description="StaticBin solves one specific problem: how do you hand compact state to someone who already knows its shape? When both ends share the schema, you stop needing to describe it on every trip."
+    />
+
+    <div class="rationale-grid">
+      <div class="rationale-prose reveal">
+        <p>
+          A small preset of twelve enums and a handful of flags fits in under
+          forty characters here. Not because StaticBin is smarter than anything
+          else. It just trusts the decoder to already know the shape, so it
+          can skip the bytes that would otherwise describe it.
+        </p>
+        <p>
+          That's the whole trade. You give up self-description. You get a token
+          that fits in a URL, a QR, a chat message, an env var. In any language,
+          with about a hundred lines of code on the hot path.
+        </p>
+        <p>
+          It was built against a runtime that wouldn't let me import libraries
+          or touch the filesystem. The codec had to work with string
+          concatenation and integer math and nothing else. That restriction
+          turned out to be a feature. Once it got small enough, it got portable
+          to anything.
+        </p>
+      </div>
+
+      <ul class="tenets">
+        {tenets.map((t) => (
+          <li class="tenet surface card-hover glow-track reveal">
+            <div class="tenet-kicker">
+              <span>{t.data.kicker}</span>
+            </div>
+            <h3 class="tenet-title">{t.data.title}</h3>
+            <div class="tenet-body">
+              <Fragment set:html={t.rendered?.html ?? ""} />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .rationale-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+  @media (max-width: 980px) {
+    .rationale-grid { grid-template-columns: 1fr; gap: 3rem; }
+  }
+
+  .rationale-prose p {
+    font-size: 1.0625rem;
+    max-width: 56ch;
+    color: var(--color-ink-100);
+    line-height: 1.55;
+  }
+  .rationale-prose p + p { margin-top: 1.25rem; }
+
+  .tenets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  @media (max-width: 560px) {
+    .tenets { grid-template-columns: 1fr; }
+  }
+
+  .tenet {
+    padding: 1.5rem 1.65rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 200px;
+  }
+
+  .tenet-kicker {
+    font-size: 11px;
+    color: var(--color-signal-300);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .tenet-kicker::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(41,151,255,0.4), transparent);
+  }
+
+  .tenet-title {
+    font-size: 1.15rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--color-ink-50);
+  }
+
+  .tenet-body {
+    font-size: 0.95rem;
+    color: var(--color-ink-300);
+    line-height: 1.5;
+  }
+  .tenet-body :global(p) { margin: 0; color: var(--color-ink-300); }
+</style>
