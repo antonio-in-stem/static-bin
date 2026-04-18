@@ -2,8 +2,9 @@
 
 > Shared-schema state, compressed to a string.
 
-**Version 1.0.0** Â· **Released January 2026** Â· **Status: production, stable wire**
-Designed and built by **Antonio M.** at **StaticResearch**.
+**Version 1.0.0** · **Released January 2026** · **Status: production, stable wire**
+
+Designed and built by **Antonio M.** for **StaticResearch**.
 
 ---
 
@@ -102,29 +103,14 @@ vectors in [`SPEC.md Â§8`](SPEC.md#8-test-vectors).
 
 | Language   | Status | Path                                  | Tests                  |
 |------------|:------:|---------------------------------------|------------------------|
-| Python 3.10+ | âœ“ reference | [`implementations/python/`](implementations/python/)     | `pytest`               |
-| JavaScript (Node 18+, modern browsers) | âœ“ | [`implementations/javascript/`](implementations/javascript/) | `npm test`             |
-| C99        | âœ“      | [`implementations/c/`](implementations/c/)               | `make run`             |
-| Fortran 2008 | âœ“    | [`implementations/fortran/`](implementations/fortran/)   | `make run`             |
+| Python 3.10+ | live | [`implementations/python/`](implementations/python/)     | `pytest`               |
+| JavaScript (Node 18+, modern browsers) | live | [`implementations/javascript/`](implementations/javascript/) | `npm test`             |
+| C99        | live      | [`implementations/c/`](implementations/c/)               | `make run`             |
+| Fortran 2008 | live    | [`implementations/fortran/`](implementations/fortran/)   | `make run`             |
 
 Adding a port is mostly a translation exercise. Once you can express
 Elias-gamma and base64url in the target language, the rest is fairly
 mechanical.
-
----
-
-## Web showcase & playground
-
-An interactive, dark-theme showcase lives under [`web/`](web/).
-Serve the directory with any static server:
-
-```bash
-python -m http.server 8080 --directory web
-# then open http://127.0.0.1:8080
-```
-
-The playground encodes and decodes live in your browser using the
-reference JavaScript port.
 
 ---
 
@@ -209,28 +195,9 @@ gfortran -c src/staticbin.f90 -Jyour_mods -o staticbin.o
 
 ### Verifying a build
 
-Every port ships with the six golden vectors from [`SPEC.md Â§8`](SPEC.md#8-test-vectors).
+Every port ships with the six golden vectors from [`SPEC.md`](SPEC.md#8-test-vectors).
 If your output matches byte-for-byte, you are wire-compatible with every
 other implementation.
-
----
-
-## Repository layout
-
-```
-StaticBin/
-â”œâ”€â”€ README.md                    this file
-â”œâ”€â”€ SPEC.md                      formal wire-format specification
-â”œâ”€â”€ LICENSE                      MIT
-â”œâ”€â”€ web/                         premium showcase + interactive playground
-â”‚   â”œâ”€â”€ index.html
-â”‚   â””â”€â”€ assets/{css,js,favicon}
-â””â”€â”€ implementations/
-    â”œâ”€â”€ python/                  reference implementation
-    â”œâ”€â”€ javascript/              pure ES module, no deps
-    â”œâ”€â”€ c/                       C99, libc only
-    â””â”€â”€ fortran/                 Fortran 2008
-```
 
 ---
 
@@ -243,7 +210,7 @@ StaticBin/
 
 ---
 
-## Roadmap Â· honest limits
+## Roadmap · honest limits
 
 StaticBin v1 is **frozen at the wire level**. It is in active production
 use and will not break that contract. Any evolution happens on a
@@ -267,7 +234,7 @@ still be the format in five years.
 
 ## About
 
-Designed and built by **Antonio M.** at **StaticResearch**.
+Designed and built by **Antonio M.** for **StaticResearch**.
 
 Released as **v1.0.0** in **January 2026**.
 
